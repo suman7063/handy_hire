@@ -6,8 +6,14 @@ export default function NotifyButton() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
   
   const handleNotify = async () => {
+    console.log("🔔 Notification button clicked");
+    console.log("📱 User Agent:", navigator.userAgent);
+    console.log("🔒 Secure Context:", window.isSecureContext);
+    console.log("🌐 Protocol:", window.location.protocol);
+    
     // Check if browser supports notifications
     if (!("Notification" in window)) {
+      console.log("❌ Browser doesn't support notifications");
       if (isIOS) {
         alert("📱 iPhone Safari doesn't support web notifications.\n\nTry using Chrome or Firefox on iPhone, or use the Share button to save this page to your home screen!");
       } else {
@@ -16,25 +22,43 @@ export default function NotifyButton() {
       return;
     }
 
+    console.log("✅ Browser supports notifications");
+
     // Check if we're in a secure context (HTTPS or localhost)
     if (!window.isSecureContext) {
+      console.log("❌ Not in secure context");
       alert("Notifications require HTTPS in production. Please use HTTPS or localhost.");
       return;
     }
 
+    console.log("✅ In secure context");
+
     // Ask user for permission if not already granted
     let permission = Notification.permission;
+    console.log("🔐 Current permission:", permission);
+    
     if (permission === "default") {
+      console.log("📝 Requesting permission...");
       permission = await Notification.requestPermission();
+      console.log("🔐 New permission:", permission);
     }
 
     // If permission granted, show the notification
     if (permission === "granted") {
-      new Notification("🎉 Hello!", {
-        body: "You clicked the button!",
-      });
+      console.log("🎉 Creating notification...");
+      try {
+        const notification = new Notification("🎉 Hello!", {
+          body: "You clicked the button!",
+          icon: "/favicon.ico"
+        });
+        console.log("✅ Notification created:", notification);
+      } catch (error) {
+        console.error("❌ Error creating notification:", error);
+        alert("Error creating notification: " + (error instanceof Error ? error.message : String(error)));
+      }
     } else {
-      alert("Please allow notifications to see them.");
+      console.log("❌ Permission denied:", permission);
+      alert("Please allow notifications to see them. Current permission: " + permission);
     }
   };
 
