@@ -9,6 +9,12 @@ export default function NotifyButton() {
       return;
     }
 
+    // Check if we're in a secure context (HTTPS or localhost)
+    if (!window.isSecureContext) {
+      alert("Notifications require HTTPS in production. Please use HTTPS or localhost.");
+      return;
+    }
+
     // Ask user for permission if not already granted
     let permission = Notification.permission;
     if (permission === "default") {
