@@ -1,9 +1,11 @@
 // components/NotifyButton.tsx
 "use client";
+import { useState } from "react";
 
 export default function NotifyButton() {
   // Detect if user is on iOS
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const [showPopup, setShowPopup] = useState(false);
   
   const handleNotify = async () => {
     console.log("🔔 Notification button clicked");
@@ -51,7 +53,7 @@ export default function NotifyButton() {
           body: "You clicked the button!",
           icon: "/favicon.ico"
         });
-        console.log("✅ Notification created:", notification);
+        console.log("✅ `Notification created`:", notification);
       } catch (error) {
         console.error("❌ Error creating notification:", error);
         alert("Error creating notification: " + (error instanceof Error ? error.message : String(error)));
@@ -60,10 +62,14 @@ export default function NotifyButton() {
       console.log("❌ Permission denied:", permission);
       alert("Please allow notifications to see them. Current permission: " + permission);
     }
+
+    // Always show popup for visual feedback
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 3000); // Hide after 3 seconds
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4 relative">
       <button
         onClick={handleNotify}
         className="p-2 bg-blue-500 text-white rounded-lg"
@@ -75,6 +81,19 @@ export default function NotifyButton() {
         <div className="text-sm text-gray-600 text-center max-w-xs">
           <p>📱 <strong>iPhone users:</strong></p>
           <p>Web notifications don&apos;t work in Safari. Try Chrome or Firefox, or add this page to your home screen!</p>
+        </div>
+      )}
+
+      {/* Popup Notification */}
+      {showPopup && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50 animate-bounce">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🎉</span>
+            <div>
+              <div className="font-bold">Hello!</div>
+              <div className="text-sm">You Are Amazing!</div>
+            </div>
+          </div>
         </div>
       )}
     </div>
